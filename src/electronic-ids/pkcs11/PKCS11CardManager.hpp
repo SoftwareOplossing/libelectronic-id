@@ -21,6 +21,7 @@
 
 #ifdef _WIN32
 #include <Windows.h>
+#include "windows-module.hpp"
 #else
 #include <dlfcn.h>
 #endif
@@ -233,7 +234,13 @@ private:
         CK_C_GetFunctionList C_GetFunctionList = nullptr;
         std::string error;
 #ifdef _WIN32
+#ifdef ELECTRONIC_ID_BEID_MODULE_PATH
+        library = module == windows_module::belgianPath({})
+            ? windows_module::loadPrivateLibrary(module)
+            : LoadLibraryW(module.c_str());
+#else
         library = LoadLibraryW(module.c_str());
+#endif
         if (library) {
             C_GetFunctionList = CK_C_GetFunctionList(GetProcAddress(library, "C_GetFunctionList"));
         } else {

@@ -81,7 +81,7 @@ inline fs::path croatianPkcs11ModulePath()
 inline fs::path belgianPkcs11ModulePath()
 {
 #ifdef _WIN32
-    return system32Path() / L"beidpkcs11.dll";
+    return windows_module::belgianPath(system32Path());
 #elif defined __APPLE__
     return "/Library/Belgium Identity "
            "Card/Pkcs11/beid-pkcs11.bundle/Contents/MacOS/libbeidpkcs11.dylib";

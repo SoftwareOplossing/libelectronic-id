@@ -50,6 +50,9 @@ target_include_directories(${PROJECT_NAME}
   include
 )
 
+include(cmake/BeidModule.cmake)
+configure_beid_module(${PROJECT_NAME})
+
 find_package(OpenSSL 3.0.0 REQUIRED)
 
 target_link_libraries(${PROJECT_NAME}
@@ -66,6 +69,10 @@ add_subdirectory(lib/libpcsc-cpp)
 # Common testing options.
 
 enable_testing()
+
+if(WIN32)
+  add_subdirectory(tests/windows-module)
+endif()
 
 find_package(GTest REQUIRED)
 
