@@ -27,9 +27,17 @@ int main(int argc, char** argv)
             return 0;
         }
 #ifdef ELECTRONIC_ID_BEID_MODULE_PATH
+#ifdef ELECTRONIC_ID_BEID_MODULE_PATH_APP_DIR
+        std::wstring executable(32768, L'\0');
+        executable.resize(GetModuleFileNameW(nullptr, executable.data(), DWORD(executable.size())));
+        require(belgianPath({}) == fs::path(executable).parent_path() / L"beidpkcs11.dll",
+                "Bundled module did not resolve beside the executable");
+        require(belgianPath({}).is_absolute(), "Bundled module path was not absolute");
+#else
         require(belgianPath(L"C:/Windows/System32") ==
                     fs::path(L"C:/Program Files/Let's Peppol/eID/beidpkcs11.dll"),
                 "Private path was not selected");
+#endif
         require(belgianPath({}).make_preferred() == belgianPath({}),
                 "Preferred separators changed path equality used by the loader");
         require(belgianPath(L"D:/OtherSystem") == belgianPath({}),

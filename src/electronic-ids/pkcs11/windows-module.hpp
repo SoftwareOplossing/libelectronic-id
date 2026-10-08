@@ -5,6 +5,8 @@
 
 #include <Windows.h>
 #include <filesystem>
+#include <stdexcept>
+#include <string>
 
 namespace electronic_id::windows_module
 {
@@ -13,7 +15,17 @@ inline std::filesystem::path belgianPath(const std::filesystem::path& systemDire
 {
 #ifdef ELECTRONIC_ID_BEID_MODULE_PATH
     (void)systemDirectory;
+#ifdef ELECTRONIC_ID_BEID_MODULE_PATH_APP_DIR
+    std::wstring executable(32768, L'\0');
+    const auto length = GetModuleFileNameW(nullptr, executable.data(), DWORD(executable.size()));
+    if (!length || length >= executable.size()) {
+        throw std::runtime_error("Cannot resolve the application's bundled Belgian module path");
+    }
+    executable.resize(length);
+    return std::filesystem::path(executable).parent_path() / ELECTRONIC_ID_BEID_MODULE_PATH;
+#else
     return ELECTRONIC_ID_BEID_MODULE_PATH;
+#endif
 #else
     return systemDirectory / L"beidpkcs11.dll";
 #endif
